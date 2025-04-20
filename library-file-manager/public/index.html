@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library & File Manager Test UI</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --primary: #5a67d8;
+      --secondary: #ffed4a;
+      --accent: #38b2ac;
+    }
+    .btn-primary {
+      @apply bg-[var(--primary)] text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-700;
+    }
+    .btn-secondary {
+      @apply bg-[var(--secondary)] text-gray-800 px-4 py-2 rounded-lg shadow hover:bg-yellow-400;
+    }
+    .card {
+      @apply bg-white p-6 rounded-2xl shadow-md mb-6;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <div class="max-w-4xl mx-auto p-6">
+    <h1 class="text-4xl font-bold mb-6 text-[var(--primary)]">Library & File Manager Test UI</h1>
+
+    <!-- Authentication Card -->
+    <div class="card">
+      <h2 class="text-2xl font-semibold mb-4">Authentication</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Register Form -->
+        <div>
+          <h3 class="font-semibold mb-2">Register</h3>
+          <form id="register-form" class="space-y-2">
+            <input type="text" id="reg-username" placeholder="Username" class="w-full p-2 border rounded" required>
+            <input type="password" id="reg-password" placeholder="Password" class="w-full p-2 border rounded" required>
+            <button type="submit" class="btn-primary">Register</button>
+          </form>
+        </div>
+        <!-- Login Form -->
+        <div>
+          <h3 class="font-semibold mb-2">Login</h3>
+          <form id="login-form" class="space-y-2">
+            <input type="text" id="login-username" placeholder="Username" class="w-full p-2 border rounded" required>
+            <input type="password" id="login-password" placeholder="Password" class="w-full p-2 border rounded" required>
+            <button type="submit" class="btn-primary">Login</button>
+          </form>
+        </div>
+      </div>
+      <p id="auth-msg" class="mt-4 text-sm"></p>
+    </div>
+
+    <!-- Book Management Card -->
+    <div class="card">
+      <h2 class="text-2xl font-semibold mb-4">Books</h2>
+      <!-- Create Book -->
+      <form id="book-create-form" class="space-y-2 mb-4">
+        <h3 class="font-semibold">Add New Book</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input type="text" id="book-title" placeholder="Title" class="p-2 border rounded" required>
+          <input type="text" id="book-author" placeholder="Author" class="p-2 border rounded" required>
+          <input type="text" id="book-genre" placeholder="Genre" class="p-2 border rounded">
+          <input type="number" id="book-year" placeholder="Year" class="p-2 border rounded">
+        </div>
+        <button type="submit" class="btn-primary">Add Book</button>
+      </form>
+      <!-- Fetch Books -->
+      <form id="book-fetch-form" class="space-y-2 mb-4">
+        <h3 class="font-semibold">Fetch Books</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <input type="number" id="fetch-page" placeholder="Page" class="p-2 border rounded" value="1">
+          <input type="number" id="fetch-limit" placeholder="Limit" class="p-2 border rounded" value="10">
+          <input type="text" id="fetch-genre" placeholder="Genre filter" class="p-2 border rounded">
+          <input type="text" id="fetch-author" placeholder="Author filter" class="p-2 border rounded">
+        </div>
+        <button type="submit" class="btn-secondary">Fetch</button>
+      </form>
+      <div id="books-list" class="space-y-2"></div>
+      <!-- Update/Delete by ID -->
+      <form id="book-update-form" class="space-y-2 mb-4">
+        <h3 class="font-semibold">Update / Delete Book by ID</h3>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <input type="text" id="book-id" placeholder="Book ID" class="p-2 border rounded" required>
+          <input type="text" id="update-title" placeholder="New Title" class="p-2 border rounded">
+          <input type="text" id="update-author" placeholder="New Author" class="p-2 border rounded">
+          <input type="text" id="update-genre" placeholder="New Genre" class="p-2 border rounded">
+          <input type="number" id="update-year" placeholder="New Year" class="p-2 border rounded">
+        </div>
+        <div class="flex gap-2">
+          <button type="button" id="btn-update-book" class="btn-primary">Update</button>
+          <button type="button" id="btn-delete-book" class="btn-secondary">Delete</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- File Management Card -->
+    <div class="card">
+      <h2 class="text-2xl font-semibold mb-4">File Upload & Management</h2>
+      <!-- Upload -->
+      <form id="file-upload-form" class="space-y-2 mb-4">
+        <h3 class="font-semibold">Upload File</h3>
+        <input type="file" id="file-input" class="p-2 border rounded">
+        <button type="submit" class="btn-primary">Upload</button>
+      </form>
+      <!-- List Files -->
+      <button id="btn-fetch-files" class="btn-secondary mb-4">Refresh File List</button>
+      <ul id="files-list" class="list-disc pl-6 space-y-1"></ul>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '/api';
+    let token = '';
+
+    // Helpers
+    const setMsg = (el, msg, color = 'text-red-600') => {
+      el.textContent = msg;
+      el.className = color;
+    };
+
+    // Auth Handlers
+    document.getElementById('register-form').onsubmit = async e => {
+      e.preventDefault();
+      const u = document.getElementById('reg-username').value;
+      const p = document.getElementById('reg-password').value;
+      const res = await fetch(`${API_BASE}/auth/register`, {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({username: u, password: p})
+      });
+      const data = await res.json();
+      if (data.token) {
+        token = data.token;
+        setMsg(document.getElementById('auth-msg'), 'Registered & logged in', 'text-green-600');
+      } else setMsg(document.getElementById('auth-msg'), data.msg || 'Error');
+    };
+    document.getElementById('login-form').onsubmit = async e => {
+      e.preventDefault();
+      const u = document.getElementById('login-username').value;
+      const p = document.getElementById('login-password').value;
+      const res = await fetch(`${API_BASE}/auth/login`, {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({username: u, password: p})
+      });
+      const data = await res.json();
+      if (data.token) {
+        token = data.token;
+        setMsg(document.getElementById('auth-msg'), 'Logged in', 'text-green-600');
+      } else setMsg(document.getElementById('auth-msg'), data.msg || 'Error');
+    };
+
+    // Book Handlers
+    document.getElementById('book-create-form').onsubmit = async e => {
+      e.preventDefault();
+      const b = {
+        title: document.getElementById('book-title').value,
+        author: document.getElementById('book-author').value,
+        genre: document.getElementById('book-genre').value,
+        year: +document.getElementById('book-year').value
+      };
+      const res = await fetch(`${API_BASE}/books`, {
+        method: 'POST', headers: {'Content-Type':'application/json','Authorization': `Bearer ${token}`},
+        body: JSON.stringify(b)
+      });
+      const data = await res.json(); console.log(data);
+      alert('Book added');
+    };
+
+    document.getElementById('book-fetch-form').onsubmit = async e => {
+      e.preventDefault();
+      const qp = new URLSearchParams({
+        page: document.getElementById('fetch-page').value,
+        limit: document.getElementById('fetch-limit').value,
+        genre: document.getElementById('fetch-genre').value,
+        author: document.getElementById('fetch-author').value
+      });
+      const res = await fetch(`${API_BASE}/books?${qp}`);
+      const books = await res.json();
+      const list = document.getElementById('books-list'); list.innerHTML = '';
+      books.forEach(b => {
+        const li = document.createElement('div');
+        li.className = 'p-2 border rounded';
+        li.textContent = `${b._id}: ${b.title} by ${b.author} (${b.genre}, ${b.year})`;
+        list.appendChild(li);
+      });
+    };
+
+    document.getElementById('btn-update-book').onclick = async () => {
+      const id = document.getElementById('book-id').value;
+      const upd = {};
+      ['title','author','genre','year'].forEach(f => {
+        const v = document.getElementById(`update-${f}`).value;
+        if (v) upd[f] = f==='year'?+v:v;
+      });
+      const res = await fetch(`${API_BASE}/books/${id}`, {
+        method: 'PUT', headers: {'Content-Type':'application/json','Authorization':`Bearer ${token}`},
+        body: JSON.stringify(upd)
+      });
+      alert('Update ' + (res.ok?'success':'failed'));
+    };
+    document.getElementById('btn-delete-book').onclick = async () => {
+      const id = document.getElementById('book-id').value;
+      const res = await fetch(`${API_BASE}/books/${id}`, {
+        method: 'DELETE', headers: {'Authorization':`Bearer ${token}`}
+      });
+      alert('Delete ' + (res.ok?'success':'failed'));
+    };
+
+    // File Handlers
+    document.getElementById('file-upload-form').onsubmit = async e => {
+      e.preventDefault();
+      const fileInput = document.getElementById('file-input');
+      const form = new FormData(); form.append('file', fileInput.files[0]);
+      const res = await fetch(`${API_BASE}/upload`, {
+        method: 'POST', headers: {'Authorization':`Bearer ${token}`}, body: form
+      });
+      const data = await res.json(); console.log(data);
+      alert('Uploaded');
+    };
+    document.getElementById('btn-fetch-files').onclick = async () => {
+      const res = await fetch(`${API_BASE}/files`, {
+        headers: {'Authorization':`Bearer ${token}`}
+      });
+      const files = await res.json();
+      const ul = document.getElementById('files-list'); ul.innerHTML = '';
+      files.forEach(f => {
+        const li = document.createElement('li');
+        li.innerHTML = `${f.name} <button onclick="downloadFile('${f.name}')" class='btn-secondary text-sm'>Download</button> <button onclick="deleteFile('${f.name}')" class='btn-primary text-sm'>Delete</button>`;
+        ul.appendChild(li);
+      });
+    };
+    window.downloadFile = name => {
+      const link = document.createElement('a');
+      link.href = `${API_BASE}/files/${name}`;
+      link.download = name;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    };
+    window.deleteFile = async name => {
+      const res = await fetch(`${API_BASE}/files/${name}`, {
+        method: 'DELETE', headers: {'Authorization':`Bearer ${token}`}
+      });
+      alert('Delete ' + (res.ok?'success':'failed'));
+      document.getElementById('btn-fetch-files').click();
+    };
+  </script>
+</body>
+</html>
