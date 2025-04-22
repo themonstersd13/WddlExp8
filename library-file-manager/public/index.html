@@ -27,7 +27,7 @@
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
-  <div class="max-w-4xl mx-auto p-6">
+  <div class="max-w-4xl mx-auto p-6 space-y-6">
     <h1 class="text-4xl font-bold mb-6 text-[var(--primary)] flex items-center">
       <i class="fa fa-layer-group mr-3"></i> Library & File Manager Test UI
     </h1>
@@ -86,7 +86,6 @@
           <input type="text" id="fetch-author" placeholder="Author filter" class="p-2 border rounded focus:border-green-400">
         </div>
         <button type="submit" class="btn-secondary"><i class="fa fa-filter mr-2"></i> Fetch</button>
-      
       </form>
       <div id="books-list" class="space-y-2"></div>
       <!-- Update/Delete by ID -->
@@ -114,8 +113,7 @@
       <!-- Upload -->
       <form id="file-upload-form" class="space-y-2 mb-4 bg-white p-4 rounded-lg shadow-sm">
         <h3 class="font-semibold mb-2 flex items-center text-yellow-600"><i class="fa fa-upload mr-2"></i> Upload File</h3>
-        <input type="file" id="file-input" class="p-2 border rounded focus:border-yellow-400">
-        <button type="submit" class="btn-primary"><i class="fa fa-upload mr-2"></i> Upload</button>
+        <input type="file" id="file-input" name="file" class="p-2 border rounded focus:border-yellow-400" required><button type="submit" class="btn-primary"><i class="fa fa-upload mr-2"></i> Upload</button>
       </form>
       <!-- List Files -->
       <button id="btn-fetch-files" class="btn-secondary mb-4"><i class="fa fa-sync-alt mr-2"></i> Refresh File List</button>
@@ -148,6 +146,7 @@
         setMsg(document.getElementById('auth-msg'), 'Registered & logged in', 'text-green-600');
       } else setMsg(document.getElementById('auth-msg'), data.msg || 'Error');
     };
+
     document.getElementById('login-form').onsubmit = async e => {
       e.preventDefault();
       const u = document.getElementById('login-username').value;
@@ -163,15 +162,150 @@
       } else setMsg(document.getElementById('auth-msg'), data.msg || 'Error');
     };
 
-    // ... (rest of the JavaScript remains unchanged)
-    document.getElementById('book-create-form').onsubmit = async e => { /*...*/ };
-    document.getElementById('book-fetch-form').onsubmit = async e => { /*...*/ };
-    document.getElementById('btn-update-book').onclick = async () => { /*...*/ };
-    document.getElementById('btn-delete-book').onclick = async () => { /*...*/ };
-    document.getElementById('file-upload-form').onsubmit = async e => { /*...*/ };
-    document.getElementById('btn-fetch-files').onclick = async () => { /*...*/ };
-    window.downloadFile = name => { /*...*/ };
-    window.deleteFile = async name => { /*...*/ };
+    // Book Handlers
+    document.getElementById('book-create-form').onsubmit = async e => {
+      e.preventDefault();
+      const b = {
+        title: document.getElementById('book-title').value,
+        author: document.getElementById('book-author').value,
+        genre: document.getElementById('book-genre').value,
+        year: +document.getElementById('book-year').value
+      };
+      const res = await fetch(`${API_BASE}/books`, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json','Authorization': `Bearer ${token}`},
+        body: JSON.stringify(b)
+      });
+      const data = await res.json();
+      alert(res.ok ? 'Book added!' : `Error: ${data.msg}`);  
+    };
+
+    document.getElementById('book-fetch-form').onsubmit = async e => {
+      e.preventDefault();
+      const qp = new URLSearchParams({
+        page: document.getElementById('fetch-page').value,
+        limit: document.getElementById('fetch-limit').value,
+        genre: document.getElementById('fetch-genre').value,
+        author: document.getElementById('fetch-author').value
+      });
+      const res = await fetch(`${API_BASE}/books?${qp}`);
+      const books = await res.json();
+      const list = document.getElementById('books-list'); list.innerHTML = '';
+      books.forEach(b => {
+        const div = document.createElement('div');
+        div.className = 'p-2 border rounded';
+        div.textContent = `${b._id}: ${b.title} by ${b.author} (${b.genre}, ${b.year})`;
+        list.appendChild(div);
+      });
+    };
+
+    document.getElementById('btn-update-book').onclick = async () => {
+      const id = document.getElementById('book-id').value;
+      const upd = {};
+      ['title','author','genre','year'].forEach(f => {
+        const v = document.getElementById(`update-${f}`).value;
+        if (v) upd[f] = f==='year' ? +v : v;
+      });
+      const res = await fetch(`${API_BASE}/books/${id}`, {
+        method: 'PUT',
+        headers: {'Content-Type':'application/json','Authorization':`Bearer ${token}`},
+        body: JSON.stringify(upd)
+      });
+      alert(res.ok ? 'Update success!' : 'Update failed');
+    };
+    document.getElementById('btn-delete-book').onclick = async () => {
+      const id = document.getElementById('book-id').value;
+      const res = await fetch(`${API_BASE}/books/${id}`, {
+        method: 'DELETE',
+        headers: {'Authorization':`Bearer ${token}`}
+      });
+      alert(res.ok ? 'Delete success!' : 'Delete failed');
+    };
+
+    // File Handlers
+    document.getElementById('file-upload-form').onsubmit = async e => {
+  e.preventDefault();
+  const formEl = document.getElementById('file-upload-form');
+
+  // Quick client‑side guard:
+  const fileInput = document.getElementById('file-input');
+  if (!fileInput.files.length) {
+    return alert('Please choose a file to upload');
+  }
+
+  // Build FormData from the <form> itself
+  const formData = new FormData(formEl);
+
+  // Do NOT set Content-Type; the browser will set the multipart boundary
+  const res = await fetch(`${API_BASE}/upload`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    },
+    body: formData
+  });
+
+  // Try to parse JSON; fallback to statusText
+  let data = {};
+  try { data = await res.json(); } catch (_) {}
+
+  if (!res.ok) {
+    // Data.message should be your server’s error text, e.g. “Invalid file type” or “No file provided”
+    return alert('Upload failed: ' + (data.message || res.statusText));
+  }
+
+  // Success! Show what the server returned:
+  alert(data.message || 'File uploaded successfully');
+};
+
+document.getElementById('btn-fetch-files').onclick = async () => {
+  const res = await fetch(`${API_BASE}/files`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+
+  if (!res.ok) {
+    return alert('Error fetching files: ' + res.statusText);
+  }
+
+  // The backend returns an array of { name, url }
+  const files = await res.json();
+  console.log(files);
+  const ul    = document.getElementById('files-list');
+  ul.innerHTML = '';
+
+  files.forEach(f => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      ${f.name}
+      <button onclick="downloadFile('${encodeURIComponent(f.name)}')" 
+              class="btn-secondary text-sm ml-2">
+        <i class="fa fa-download"></i>
+      </button>
+      <button onclick="deleteFile('${encodeURIComponent(f.name)}')" 
+              class="btn-primary text-sm ml-1">
+        <i class="fa fa-trash"></i>
+      </button>`;
+    ul.appendChild(li);
+  });
+};
+
+window.downloadFile = name => {
+  // this will trigger your GET /api/files/:name
+  window.location.href = `${API_BASE}/files/${name}`; 
+};
+
+window.deleteFile = async name => {
+  const res = await fetch(`${API_BASE}/files/${name}`, {
+    method: 'DELETE',
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  if (res.ok) {
+    alert('File deleted');
+    document.getElementById('btn-fetch-files').click();
+  } else {
+    alert('Delete failed');
+  }
+};
   </script>
 </body>
 </html>
