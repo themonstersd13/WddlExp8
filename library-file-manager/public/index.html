@@ -1,58 +1,62 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Library & File Manager Test UI</title>
+  <title>Library & File Manager Test UI (Dark Theme)</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-pVI2mQ2LQ0g7aJCl2y+3Zr8bQ4jM1X4yF5Ef2hvFQKo+8Bb2SkS8EQ8kx0Q3Bf5zjy3aeRBo5D1Xhbi2Y+K1Kg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
+    /* Dark theme palette */
     :root {
-      --primary: #5a67d8;
-      --secondary: #ffed4a;
-      --accent: #38b2ac;
+      --primary: #2c3e50;
+      --secondary: #34495e;
+      --accent: #16a085;
     }
     .btn-primary {
-      @apply bg-[var(--primary)] text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-700 flex items-center justify-center;
+      @apply bg-[var(--primary)] text-white px-4 py-2 rounded-lg shadow hover:bg-opacity-80 flex items-center justify-center;
     }
     .btn-secondary {
-      @apply bg-[var(--secondary)] text-gray-800 px-4 py-2 rounded-lg shadow hover:bg-yellow-400 flex items-center justify-center;
+      @apply bg-[var(--secondary)] text-white px-4 py-2 rounded-lg shadow hover:bg-opacity-80 flex items-center justify-center;
     }
     .card {
-      @apply bg-white p-6 rounded-2xl shadow-md mb-6;
+      @apply bg-gray-800 text-gray-100 p-6 rounded-2xl shadow-md mb-6 border-l-4;
     }
   </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body class="bg-gray-900 text-gray-100">
   <div class="max-w-4xl mx-auto p-6 space-y-6">
     <h1 class="text-4xl font-bold mb-6 text-[var(--primary)] flex items-center">
-      <i class="fa fa-layer-group mr-3"></i> Library & File Manager Test UI
+      <i class="fa fa-layer-group mr-3"></i> Library & File Manager Test UI (Dark)
     </h1>
 
     <!-- Authentication Card -->
-    <div class="card border-l-4 border-indigo-500 bg-indigo-50">
-      <h2 class="text-2xl font-semibold mb-4 text-indigo-700 flex items-center">
+    <div class="card border-[var(--primary)]">
+      <h2 class="text-2xl font-semibold mb-4 text-[var(--primary)] flex items-center">
         <i class="fa fa-user-lock mr-2"></i> Authentication
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <!-- Register Form -->
-        <div class="bg-white p-4 rounded-lg shadow-sm">
-          <h3 class="font-semibold mb-2 flex items-center text-indigo-600"><i class="fa fa-user-plus mr-2"></i> Register</h3>
+        <div class="bg-gray-700 p-4 rounded-lg shadow-sm">
+          <h3 class="font-semibold mb-2 flex items-center text-[var(--primary)]">
+            <i class="fa fa-user-plus mr-2"></i> Register
+          </h3>
           <form id="register-form" class="space-y-2">
-            <input type="text" id="reg-username" placeholder="Username" class="w-full p-2 border rounded focus:border-indigo-400" required>
-            <input type="password" id="reg-password" placeholder="Password" class="w-full p-2 border rounded focus:border-indigo-400" required>
+            <input type="text" id="reg-username" placeholder="Username" class="w-full p-2 border rounded focus:border-[var(--accent)] bg-gray-900" required />
+            <input type="password" id="reg-password" placeholder="Password" class="w-full p-2 border rounded focus:border-[var(--accent)] bg-gray-900" required />
             <button type="submit" class="btn-primary"><i class="fa fa-check mr-2"></i> Register</button>
           </form>
         </div>
         <!-- Login Form -->
-        <div class="bg-white p-4 rounded-lg shadow-sm">
-          <h3 class="font-semibold mb-2 flex items-center text-indigo-600"><i class="fa fa-sign-in-alt mr-2"></i> Login</h3>
+        <div class="bg-gray-700 p-4 rounded-lg shadow-sm">
+          <h3 class="font-semibold mb-2 flex items-center text-[var(--primary)]">
+            <i class="fa fa-sign-in-alt mr-2"></i> Login
+          </h3>
           <form id="login-form" class="space-y-2">
-            <input type="text" id="login-username" placeholder="Username" class="w-full p-2 border rounded focus:border-indigo-400" required>
-            <input type="password" id="login-password" placeholder="Password" class="w-full p-2 border rounded focus:border-indigo-400" required>
+            <input type="text" id="login-username" placeholder="Username" class="w-full p-2 border rounded focus:border-[var(--accent)] bg-gray-900" required />
+            <input type="password" id="login-password" placeholder="Password" class="w-full p-2 border rounded focus:border-[var(--accent)] bg-gray-900" required />
             <button type="submit" class="btn-primary"><i class="fa fa-sign-in-alt mr-2"></i> Login</button>
           </form>
         </div>
@@ -61,42 +65,48 @@
     </div>
 
     <!-- Book Management Card -->
-    <div class="card border-l-4 border-green-500 bg-green-50">
-      <h2 class="text-2xl font-semibold mb-4 text-green-700 flex items-center">
+    <div class="card border-[var(--accent)]">
+      <h2 class="text-2xl font-semibold mb-4 text-[var(--accent)] flex items-center">
         <i class="fa fa-book-open mr-2"></i> Books
       </h2>
       <!-- Create Book -->
-      <form id="book-create-form" class="space-y-2 mb-4 bg-white p-4 rounded-lg shadow-sm">
-        <h3 class="font-semibold mb-2 flex items-center text-green-600"><i class="fa fa-plus mr-2"></i> Add New Book</h3>
+      <form id="book-create-form" class="space-y-2 mb-4 bg-gray-700 p-4 rounded-lg shadow-sm">
+        <h3 class="font-semibold mb-2 flex items-center text-[var(--accent)]">
+          <i class="fa fa-plus mr-2"></i> Add New Book
+        </h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input type="text" id="book-title" placeholder="Title" class="p-2 border rounded focus:border-green-400" required>
-          <input type="text" id="book-author" placeholder="Author" class="p-2 border rounded focus:border-green-400" required>
-          <input type="text" id="book-genre" placeholder="Genre" class="p-2 border rounded focus:border-green-400">
-          <input type="number" id="book-year" placeholder="Year" class="p-2 border rounded focus:border-green-400">
+          <input type="text" id="book-title" placeholder="Title" class="p-2 border rounded focus:border-[var(--accent)] bg-gray-900" required />
+          <input type="text" id="book-author" placeholder="Author" class="p-2 border rounded focus:border-[var(--accent)] bg-gray-900" required />
+          <input type="text" id="book-genre" placeholder="Genre" class="p-2 border rounded focus:border-[var(--accent)] bg-gray-900" />
+          <input type="number" id="book-year" placeholder="Year" class="p-2 border rounded focus:border-[var(--accent)] bg-gray-900" />
         </div>
         <button type="submit" class="btn-primary"><i class="fa fa-plus mr-2"></i> Add Book</button>
       </form>
       <!-- Fetch Books -->
-      <form id="book-fetch-form" class="space-y-2 mb-4 bg-white p-4 rounded-lg shadow-sm">
-        <h3 class="font-semibold mb-2 flex items-center text-green-600"><i class="fa fa-search mr-2"></i> Fetch Books</h3>
+      <form id="book-fetch-form" class="space-y-2 mb-4 bg-gray-700 p-4 rounded-lg shadow-sm">
+        <h3 class="font-semibold mb-2 flex items-center text-[var(--accent)]">
+          <i class="fa fa-search mr-2"></i> Fetch Books
+        </h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <input type="number" id="fetch-page" placeholder="Page" class="p-2 border rounded focus:border-green-400" value="1">
-          <input type="number" id="fetch-limit" placeholder="Limit" class="p-2 border rounded focus:border-green-400" value="10">
-          <input type="text" id="fetch-genre" placeholder="Genre filter" class="p-2 border rounded focus:border-green-400">
-          <input type="text" id="fetch-author" placeholder="Author filter" class="p-2 border rounded focus:border-green-400">
+          <input type="number" id="fetch-page" placeholder="Page" class="p-2 border rounded focus:border-[var(--accent)] bg-gray-900" value="1" />
+          <input type="number" id="fetch-limit" placeholder="Limit" class="p-2 border rounded focus:border-[var(--accent)] bg-gray-900" value="10" />
+          <input type="text" id="fetch-genre" placeholder="Genre filter" class="p-2 border rounded focus:border-[var(--accent)] bg-gray-900" />
+          <input type="text" id="fetch-author" placeholder="Author filter" class="p-2 border rounded focus:border-[var(--accent)] bg-gray-900" />
         </div>
         <button type="submit" class="btn-secondary"><i class="fa fa-filter mr-2"></i> Fetch</button>
       </form>
       <div id="books-list" class="space-y-2"></div>
       <!-- Update/Delete by ID -->
-      <form id="book-update-form" class="space-y-2 mb-4 bg-white p-4 rounded-lg shadow-sm">
-        <h3 class="font-semibold mb-2 flex items-center text-green-600"><i class="fa fa-edit mr-2"></i> Update / Delete by ID</h3>
+      <form id="book-update-form" class="space-y-2 mb-4 bg-gray-700 p-4 rounded-lg shadow-sm">
+        <h3 class="font-semibold mb-2 flex items-center text-[var(--accent)]">
+          <i class="fa fa-edit mr-2"></i> Update / Delete by ID
+        </h3>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <input type="text" id="book-id" placeholder="Book ID" class="p-2 border rounded focus:border-green-400" required>
-          <input type="text" id="update-title" placeholder="New Title" class="p-2 border rounded focus:border-green-400">
-          <input type="text" id="update-author" placeholder="New Author" class="p-2 border rounded focus:border-green-400">
-          <input type="text" id="update-genre" placeholder="New Genre" class="p-2 border rounded focus:border-green-400">
-          <input type="number" id="update-year" placeholder="New Year" class="p-2 border rounded focus:border-green-400">
+          <input type="text" id="book-id" placeholder="Book ID" class="p-2 border rounded focus:border-[var(--accent)] bg-gray-900" required />
+          <input type="text" id="update-title" placeholder="New Title" class="p-2 border rounded focus:border-[var(--accent)] bg-gray-900" />
+          <input type="text" id="update-author" placeholder="New Author" class="p-2 border rounded focus:border-[var(--accent)] bg-gray-900" />
+          <input type="text" id="update-genre" placeholder="New Genre" class="p-2 border rounded focus:border-[var(--accent)] bg-gray-900" />
+          <input type="number" id="update-year" placeholder="New Year" class="p-2 border rounded focus:border-[var(--accent)] bg-gray-900" />
         </div>
         <div class="flex gap-2">
           <button type="button" id="btn-update-book" class="btn-primary"><i class="fa fa-check mr-2"></i> Update</button>
@@ -106,14 +116,17 @@
     </div>
 
     <!-- File Management Card -->
-    <div class="card border-l-4 border-yellow-500 bg-yellow-50">
-      <h2 class="text-2xl font-semibold mb-4 text-yellow-700 flex items-center">
+    <div class="card border-[var(--secondary)]">
+      <h2 class="text-2xl font-semibold mb-4 text-[var(--secondary)] flex items-center">
         <i class="fa fa-file-upload mr-2"></i> File Upload & Management
       </h2>
       <!-- Upload -->
-      <form id="file-upload-form" class="space-y-2 mb-4 bg-white p-4 rounded-lg shadow-sm">
-        <h3 class="font-semibold mb-2 flex items-center text-yellow-600"><i class="fa fa-upload mr-2"></i> Upload File</h3>
-        <input type="file" id="file-input" name="file" class="p-2 border rounded focus:border-yellow-400" required><button type="submit" class="btn-primary"><i class="fa fa-upload mr-2"></i> Upload</button>
+      <form id="file-upload-form" class="space-y-2 mb-4 bg-gray-700 p-4 rounded-lg shadow-sm">
+        <h3 class="font-semibold mb-2 flex items-center text-[var(--secondary)]">
+          <i class="fa fa-upload mr-2"></i> Upload File
+        </h3>
+        <input type="file" id="file-input" name="file" class="p-2 border rounded focus:border-[var(--accent)] bg-gray-900" required />
+        <button type="submit" class="btn-primary"><i class="fa fa-upload mr-2"></i> Upload</button>
       </form>
       <!-- List Files -->
       <button id="btn-fetch-files" class="btn-secondary mb-4"><i class="fa fa-sync-alt mr-2"></i> Refresh File List</button>
@@ -122,7 +135,7 @@
   </div>
 
   <script>
-    const API_BASE = '/api';
+    const API_BASE = 'http://localhost:5000/api';
     let token = '';
 
     // Helpers
@@ -132,35 +145,85 @@
     };
 
     // Auth Handlers
-    document.getElementById('register-form').onsubmit = async e => {
-      e.preventDefault();
-      const u = document.getElementById('reg-username').value;
-      const p = document.getElementById('reg-password').value;
-      const res = await fetch(`${API_BASE}/auth/register`, {
-        method: 'POST', headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({username: u, password: p})
-      });
-      const data = await res.json();
-      if (data.token) {
-        token = data.token;
-        setMsg(document.getElementById('auth-msg'), 'Registered & logged in', 'text-green-600');
-      } else setMsg(document.getElementById('auth-msg'), data.msg || 'Error');
-    };
-
     document.getElementById('login-form').onsubmit = async e => {
-      e.preventDefault();
-      const u = document.getElementById('login-username').value;
-      const p = document.getElementById('login-password').value;
-      const res = await fetch(`${API_BASE}/auth/login`, {
-        method: 'POST', headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({username: u, password: p})
-      });
-      const data = await res.json();
-      if (data.token) {
-        token = data.token;
-        setMsg(document.getElementById('auth-msg'), 'Logged in', 'text-green-600');
-      } else setMsg(document.getElementById('auth-msg'), data.msg || 'Error');
-    };
+  e.preventDefault();
+  const u = document.getElementById('login-username').value;
+  const p = document.getElementById('login-password').value;
+  const res = await fetch(`${API_BASE}/auth/login`, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({username: u, password: p})
+  });
+  const data = await res.json();
+  console.log(data);
+  if (data.token) {
+    token = data.token;
+    setMsg(document.getElementById('auth-msg'), 'Login successful!', 'text-green-500');
+  } else {
+    setMsg(document.getElementById('auth-msg'), data.message || 'Login failed.');
+  }
+};
+document.getElementById('register-form').onsubmit = async e => {
+  e.preventDefault();
+  const u = document.getElementById('reg-username').value;
+  const p = document.getElementById('reg-password').value;
+
+  try {
+    const res = await fetch(`${API_BASE}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: u, password: p })
+    });
+
+    const data = await res.json();
+    console.log(data);
+    if (data.message?.includes('E11000')) {
+  setMsg(document.getElementById('auth-msg'), 'Username already exists', 'text-red-500');
+} else {
+  setMsg(document.getElementById('auth-msg'), data.message || 'Registration failed', 'text-red-500');
+}
+
+    if (data.token) {
+      token = data.token;
+      setMsg(document.getElementById('auth-msg'), 'Registration successful!', 'text-green-500');
+    } else {
+      setMsg(document.getElementById('auth-msg'), data.message || 'Registration failed');
+    }
+  } catch (err) {
+    console.error('Register error:', err);
+    setMsg(document.getElementById('auth-msg'), 'Network error', 'text-red-500');
+  }
+};
+
+    // document.getElementById('register-form').onsubmit = async e => {
+    //   e.preventDefault();
+    //   const u = document.getElementById('reg-username').value;
+    //   const p = document.getElementById('reg-password').value;
+    //   const res = await fetch(`${API_BASE}/auth/register`, {
+    //     method: 'POST', headers: {'Content-Type':'application/json'},
+    //     body: JSON.stringify({username: u, password: p})
+    //   });
+    //   const data = await res.json();
+    //   console.log(data);
+    //   if (data.token) {
+    //     token = data.token;
+    //     setMsg(document.getElementById('auth-msg'), 'Registered & logged in', 'text-green-600');
+    //   } else setMsg(document.getElementById('auth-msg'), data.msg || 'Error');
+    // };
+
+    // document.getElementById('login-form').onsubmit = async e => {
+    //   e.preventDefault();
+    //   const u = document.getElementById('login-username').value;
+    //   const p = document.getElementById('login-password').value;
+    //   const res = await fetch(`${API_BASE}/auth/login`, {
+    //     method: 'POST', headers: {'Content-Type':'application/json'},
+    //     body: JSON.stringify({username: u, password: p})
+    //   });
+    //   const data = await res.json();
+    //   if (data.token) {
+    //     token = data.token;
+    //     setMsg(document.getElementById('auth-msg'), 'Logged in', 'text-green-600');
+    //   } else setMsg(document.getElementById('auth-msg'), data.msg || 'Error');
+    // };
 
     // Book Handlers
     document.getElementById('book-create-form').onsubmit = async e => {
